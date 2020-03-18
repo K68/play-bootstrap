@@ -53,6 +53,10 @@ object UtilWxPay extends WxPayHelper {}
 
 object UtilApplePay extends ApplePayHelper {}
 
+object UtilDaoImpl extends DaoImplSimple { // SlaveClusterDao
+
+}
+
 @Singleton
 class ActionRuleBuilder @Inject()(actorSystem: ActorSystem,
                                   appLifecycle: ApplicationLifecycle,
@@ -70,7 +74,7 @@ class ActionRuleBuilder @Inject()(actorSystem: ActorSystem,
   override def daoH5Resource: Option[H5ResourceDao] = None
   override def daoMedia: Option[MediaDao] = None
 
-  override def repoDao: DaoTrait = DaoImplSimple        // RepoDao 或其他 DaoImpl
+  override def repoDao: DaoTrait = UtilDaoImpl        // RepoDao 或其他 DaoImpl
   override val objAuthConst: AuthConstBase = AuthConst
   override val objNormalRsp: NormalRspBase = NormalRsp
   override val objErrorCode: ErrorCodeBase = ErrorCode
@@ -86,7 +90,7 @@ class ActionRuleBuilder @Inject()(actorSystem: ActorSystem,
   // ChatMailActor.startChatMailBoxes(actorSystem, repoDao)
 
   // More
-  MiracleSystem.setup(actorSystem, appLifecycle,
+  MiracleSystem.setup(actorSystem, appLifecycle, repoDao,
     shutdownSysHook = { () =>
       // RepoDao.ctx.dataSource.close()
       actorSystem.terminate()
