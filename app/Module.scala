@@ -2,7 +2,6 @@ import com.google.inject.AbstractModule
 import java.time.{Clock, ZoneId}
 
 import com.amzport.config._
-import repo.RepoDao
 
 /**
  * This class is a Guice module that tells Guice how to bind several
@@ -17,18 +16,9 @@ import repo.RepoDao
 class Module extends AbstractModule {
 
   override def configure(): Unit = {
-
     val zoneId: ZoneId = initTimeZone()
-
-    // Use the system clock as the default implementation of Clock
-    // bind(classOf[Clock]).toInstance(Clock.systemDefaultZone)
     bind(classOf[Clock]).toInstance(Clock.system(zoneId))
-
-    // Set AtomicCounter as the implementation for Counter.
-    // bind(classOf[Counter]).to(classOf[AtomicCounter])
-
-    bind(classOf[RepoDao]).asEagerSingleton()
-
+    // bind(classOf[RepoDao]).asEagerSingleton()  // suit for projects without postgres
   }
 
 }

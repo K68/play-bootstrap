@@ -1,6 +1,6 @@
 name := "play-bootstrap"
 
-version := "0.9.0"
+version := "0.9.1"
 
 lazy val `play-bootstrap` = (project in file(".")).enablePlugins(PlayScala)
       

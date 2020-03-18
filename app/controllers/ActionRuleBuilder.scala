@@ -2,12 +2,14 @@ package controllers
 
 import akka.actor.ActorSystem
 import com.amzport.chat.{ChatDao, ChatMailActor}
+import com.amzport.cluster.MiracleSystem
+import com.amzport.cluster.MiracleSystem.GlobalCommand
 import javax.inject.{Inject, Singleton}
 import play.api.cache.SyncCacheApi
 import play.api.Configuration
 import play.api.mvc._
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
 import repo.RepoDao
 import com.amzport.controllers.{ActionBuilder, AuthConstBase, ErrorCodeBase, NormalRspBase}
@@ -16,8 +18,10 @@ import com.amzport.markdown.MarkdownDao
 import com.amzport.media.MediaDao
 import com.amzport.oss.QiniuHelper
 import com.amzport.pay.{AbTradeBackDao, AliPayHelper, ApplePayHelper, WxPayHelper}
+import com.amzport.repo.{DaoImplSimple, DaoTrait}
 import com.amzport.sttp.UtilHelper
 import com.amzport.trace.TraceDao
+import play.api.inject.ApplicationLifecycle
 import play.api.libs.json.Json
 import play.api.mvc.Results.{Forbidden, Ok}
 
@@ -51,12 +55,13 @@ object UtilApplePay extends ApplePayHelper {}
 
 @Singleton
 class ActionRuleBuilder @Inject()(actorSystem: ActorSystem,
+                                  appLifecycle: ApplicationLifecycle,
                                   parser: BodyParsers.Default,
                                   configuration: Configuration,
-                                  repoDao: RepoDao,
+                                  // repoDao: RepoDao,
                                   cache: SyncCacheApi
                           )(implicit ec: ExecutionContext)
-  extends ActionBuilder(parser, configuration, repoDao, cache) {
+  extends ActionBuilder(parser, configuration, cache) {
 
   override def daoAbTradeBack: Option[AbTradeBackDao] = None
   override def daoMarkdown: Option[MarkdownDao] = None
@@ -65,6 +70,7 @@ class ActionRuleBuilder @Inject()(actorSystem: ActorSystem,
   override def daoH5Resource: Option[H5ResourceDao] = None
   override def daoMedia: Option[MediaDao] = None
 
+  override def repoDao: DaoTrait = DaoImplSimple        // RepoDao 或其他 DaoImpl
   override val objAuthConst: AuthConstBase = AuthConst
   override val objNormalRsp: NormalRspBase = NormalRsp
   override val objErrorCode: ErrorCodeBase = ErrorCode
@@ -74,20 +80,21 @@ class ActionRuleBuilder @Inject()(actorSystem: ActorSystem,
   override val objUtilWxPay: WxPayHelper = UtilWxPay
   override val objUtilApplePay: ApplePayHelper = UtilApplePay
 
-  super.init()
+  super.init(initRepoDao = false)
 
   // Start Chat Engine
   // ChatMailActor.startChatMailBoxes(actorSystem, repoDao)
 
   // More
-
-  /*
-    lifecycle.addStopHook { () =>
-    Future.successful{
-      RepoDao.ctx.dataSource.close()
+  MiracleSystem.setup(actorSystem, appLifecycle,
+    shutdownSysHook = { () =>
+      // RepoDao.ctx.dataSource.close()
       actorSystem.terminate()
+      Future.successful(())
+    },
+    globalCommandHook = { command: GlobalCommand =>
+      Future.successful(MiracleSystem.Invalid)
     }
-  }
-   */
+  )
 
 }

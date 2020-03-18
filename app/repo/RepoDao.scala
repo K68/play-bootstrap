@@ -12,7 +12,9 @@ import actors.Worker
 import akka.util.Timeout
 import play.api.{Configuration, Logging, mvc}
 import com.amzport.repo.DaoBase
+import com.amzport.repo.model._
 import play.api.libs.json.{JsValue, Json}
+
 import scala.util.Try
 
 object RepoDao {
@@ -37,14 +39,13 @@ class RepoDao @Inject()(actorSystem: ActorSystem,
   val workerRef: ActorRef = actorSystem.actorOf(Worker.props(this), "Actor_Worker")
 
   actorSystem.scheduler.scheduleWithFixedDelay(30.seconds, webServiceGap.seconds) { () =>
-    /* 抽取系统设置表信息
+    // 抽取系统设置表信息
     run(
       query[SystemSetting]
     ).foreach { setting =>
       val key = s"SYSTEM:SETTING:${setting.settingKey}"
       cacheSync.set(key, setting, 30.seconds)
     }
-    */
   }
 
   override def dealNewAccountParent(accountId: Long): Unit = {
