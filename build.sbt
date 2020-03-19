@@ -2,7 +2,7 @@ name := "play-bootstrap"
 
 version := "0.9.1"
 
-lazy val `play-bootstrap` = (project in file(".")).enablePlugins(PlayScala)
+lazy val `play-bootstrap` = (project in file(".")).enablePlugins(PlayScala, LauncherJarPlugin)
       
 scalaVersion := "2.13.1"
 
@@ -12,6 +12,7 @@ libraryDependencies ++= Seq(
 
   // play framework & akka
   "com.typesafe.akka" %% "akka-cluster-typed" % "2.6.3",
+  "com.typesafe.akka" %% "akka-serialization-jackson" % "2.6.3",
 
   // postgresql
   "org.postgresql" % "postgresql" % "42.2.10",

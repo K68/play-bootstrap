@@ -4,3 +4,7 @@
 # ~~~~
 
 GET     /api/cluster_status     controllers.AuthController.clusterStatus()
+
+GET     /api/hello_world        controllers.AuthController.helloWorld(nm: String)
+
+GET     /api/test_gen_auth      controllers.AuthController.testGenAuth()

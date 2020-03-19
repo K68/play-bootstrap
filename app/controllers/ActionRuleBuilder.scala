@@ -3,7 +3,7 @@ package controllers
 import akka.actor.ActorSystem
 import com.amzport.chat.{ChatDao, ChatMailActor}
 import com.amzport.cluster.MiracleSystem
-import com.amzport.cluster.MiracleSystem.GlobalCommand
+import com.amzport.cluster
 import javax.inject.{Inject, Singleton}
 import play.api.cache.SyncCacheApi
 import play.api.Configuration
@@ -24,6 +24,7 @@ import com.amzport.trace.TraceDao
 import play.api.inject.ApplicationLifecycle
 import play.api.libs.json.Json
 import play.api.mvc.Results.{Forbidden, Ok}
+import repo.ClusterModel
 
 object AuthConst extends AuthConstBase {
   // More
@@ -96,8 +97,14 @@ class ActionRuleBuilder @Inject()(actorSystem: ActorSystem,
       actorSystem.terminate()
       Future.successful(())
     },
-    globalCommandHook = { command: GlobalCommand =>
-      Future.successful(MiracleSystem.Invalid)
+    globalCommandHook = { command: cluster.GlobalCommand =>
+      command match {
+        case ClusterModel.HelloWorld(name) =>
+          Future.successful(ClusterModel.HelloWorldRsp(s"Hello World: $name"))
+
+        case _ =>
+          Future.successful(cluster.Invalid())
+      }
     }
   )
 
