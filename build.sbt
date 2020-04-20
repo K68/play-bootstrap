@@ -1,9 +1,9 @@
 name := "play-bootstrap"
 
-version := "0.9.1"
+version := "0.9.2"
 
 lazy val `play-bootstrap` = (project in file(".")).enablePlugins(PlayScala, LauncherJarPlugin)
-      
+
 scalaVersion := "2.13.1"
 
 libraryDependencies ++= Seq(
@@ -16,6 +16,9 @@ libraryDependencies ++= Seq(
 
   // postgresql
   "org.postgresql" % "postgresql" % "42.2.10",
+
+  // monix
+  "io.monix" %% "monix" % "3.1.0",
 
   // quill
   "io.getquill" %% "quill-jdbc" % "3.5.0",

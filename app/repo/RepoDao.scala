@@ -11,7 +11,7 @@ import Model._
 import actors.Worker
 import akka.util.Timeout
 import play.api.{Configuration, Logging, mvc}
-import com.amzport.repo.DaoBase
+import com.amzport.repo.{DaoBase, WebsiteTrait}
 import com.amzport.repo.model._
 import play.api.libs.json.{JsValue, Json}
 
@@ -27,7 +27,9 @@ class RepoDao @Inject()(actorSystem: ActorSystem,
                         cacheSync: SyncCacheApi,
                         configuration: Configuration
                        )
-  extends DaoBase(configuration, RepoDao.ctx, cacheAsync, cacheSync) with Logging {
+  extends DaoBase(configuration, RepoDao.ctx, cacheAsync, cacheSync) with WebsiteTrait with Logging {
+
+  override val ctxWebsiteTrait: PostgresJdbcContext[SnakeCase.type] = this.ctx
 
   import this.ctx._
   implicit val ecBlocking: ExecutionContext = actorSystem.dispatchers.lookup(id = "blockingPool")
@@ -54,6 +56,18 @@ class RepoDao @Inject()(actorSystem: ActorSystem,
 
   override def dealNewAccountSelf(accountId: Long): Unit = {
     //
+  }
+
+  def getCategoryTest: Future[List[JsValue]] = {
+    Future {
+      allWebCategory.map(i => Json.toJson(i))
+    }
+  }
+
+  def getWebComBaseTest: Future[List[JsValue]] = {
+    Future {
+      run(query[WebComBase]).map(i => Json.toJson(i))
+    }
   }
 
 }
