@@ -12,3 +12,11 @@ GET     /api/test_gen_auth      controllers.AuthController.testGenAuth()
 GET     /api/test_web_cat       controllers.AdapterController.testWebCategory()
 
 GET     /api/test_web_base      controllers.AdapterController.testWebComBase()
+
+GET     /api/phone_exists       controllers.AdapterController.isPhoneExist(phone: String)
+
+GET     /testXML                controllers.AdapterController.testXML()
+
+GET     /ws1                    controllers.AuthController.socket1
+
+#GET     /ws2                    controllers.AuthController.socket2

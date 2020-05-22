@@ -2,7 +2,9 @@ package controllers
 
 import java.time.LocalDateTime
 
+import actors.{MyWebSocketActor, MyWebSocketTypedActor}
 import akka.actor.ActorSystem
+import akka.actor.typed.Props
 import akka.stream.Materializer
 import com.amzport.cluster
 import com.amzport.cluster.MiracleSystem
@@ -10,8 +12,10 @@ import com.amzport.controllers.AuthBaseController
 import javax.inject.{Inject, Singleton}
 import play.api.cache.SyncCacheApi
 import play.api.libs.json.{JsValue, Json}
+import play.api.libs.streams.ActorFlow
 import play.api.mvc._
 import repo.ClusterModel
+import akka.actor.typed.javadsl.Adapter
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -50,5 +54,19 @@ class AuthController @Inject()(cc: ControllerComponents,
       ))
     }
   }
+
+  // 参考 https://www.playframework.com/documentation/2.8.x/ScalaWebSockets
+  def socket1 = WebSocket.accept[String, String] { request =>
+    ActorFlow.actorRef { out =>
+      MyWebSocketActor.props(out)
+    }
+  }
+
+//  def socket2 = WebSocket.accept[String, String] { request =>
+//    ActorFlow.actorRef { out =>
+//      MyWebSocketTypedActor
+//        .create(Adapter.toTyped[String](out))
+//    }
+//  }
 
 }
