@@ -1,15 +1,19 @@
 package actors
 
 import akka.actor._
+import scala.concurrent.duration._
 
 object MyWebSocketActor {
   def props(out: ActorRef) = Props(new MyWebSocketActor(out))
 }
 
-class MyWebSocketActor(out: ActorRef) extends Actor {
+class MyWebSocketActor(out: ActorRef) extends Actor with Timers {
+  import context.dispatcher
+
+  timers.startTimerWithFixedDelay("abc", "hello", 1.seconds)
+
   def receive = {
     case msg: String =>
-      val timeStamp = System.currentTimeMillis()
-      out ! timeStamp.toString
+      out ! msg
   }
 }
