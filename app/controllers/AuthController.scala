@@ -36,7 +36,7 @@ class AuthController @Inject()(cc: ControllerComponents,
   }
 
   def helloWorld(nm: String): Action[AnyContent] = Action.async { _ =>
-    MiracleSystem.askMaster(ClusterModel.HelloWorld(nm)).map { rsp =>
+    MiracleSystem.askMaster(ClusterModel.HelloWorld(nm, "666".getBytes)).map { rsp =>
       val result = rsp.asInstanceOf[ClusterModel.HelloWorldRsp]
       NormalRsp.SUCCESS(result.result)
     }

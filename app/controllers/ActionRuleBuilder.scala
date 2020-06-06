@@ -99,8 +99,8 @@ class ActionRuleBuilder @Inject()(actorSystem: ActorSystem,
     },
     globalCommandHook = { command: cluster.GlobalCommand =>
       command match {
-        case ClusterModel.HelloWorld(name) =>
-          Future.successful(ClusterModel.HelloWorldRsp(s"Hello World: $name"))
+        case ClusterModel.HelloWorld(name, b) =>
+          Future.successful(ClusterModel.HelloWorldRsp(s"Hello World: $name ${b.mkString}"))
 
         case _ =>
           Future.successful(cluster.Invalid())

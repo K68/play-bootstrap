@@ -18,28 +18,28 @@ import scala.concurrent.{ExecutionContext, Future}
 class AdapterController @Inject()(cc: ControllerComponents,
                                   actionBuilder: ActionRuleBuilder,
                                   cache: SyncCacheApi,
-                                  repoDao: RepoDao
+                                  // repoDao: RepoDao
                                  )(implicit executionContext: ExecutionContext)
   extends AdapterBaseController(cc, actionBuilder, cache) with Logging {
   import ErrorCode._
 
-  def testWebCategory(): Action[AnyContent] = Action.async { _ =>
-    repoDao.getCategoryTest.map { rsp =>
-      NormalRsp.SUCCESS(JsArray(rsp))
-    }
-  }
-
-  def testWebComBase(): Action[AnyContent] = Action.async { _ =>
-    repoDao.getWebComBaseTest.map { rsp =>
-      NormalRsp.SUCCESS(JsArray(rsp))
-    }
-  }
-
-  def isPhoneExist(phone: String): Action[AnyContent] = Action.async { _ =>
-    repoDao.isPhoneNumberExist(phone).map{ rsp =>
-      NormalRsp.SUCCESS(rsp.toString)
-    }
-  }
+//  def testWebCategory(): Action[AnyContent] = Action.async { _ =>
+//    repoDao.getCategoryTest.map { rsp =>
+//      NormalRsp.SUCCESS(JsArray(rsp))
+//    }
+//  }
+//
+//  def testWebComBase(): Action[AnyContent] = Action.async { _ =>
+//    repoDao.getWebComBaseTest.map { rsp =>
+//      NormalRsp.SUCCESS(JsArray(rsp))
+//    }
+//  }
+//
+//  def isPhoneExist(phone: String): Action[AnyContent] = Action.async { _ =>
+//    repoDao.isPhoneNumberExist(phone).map{ rsp =>
+//      NormalRsp.SUCCESS(rsp.toString)
+//    }
+//  }
 
   def testXML(): Action[AnyContent] = Action.async { _ =>
     val XXX = "ABC"
